@@ -59,10 +59,17 @@ frontend_path = Path(__file__).parent.parent.parent / "frontend" / "dist"
 if frontend_path.exists():
     app.mount("/assets", StaticFiles(directory=frontend_path / "assets"), name="assets")
 
-    @app.get("/{path:path}")
-    async def serve_frontend(path: str):
-        """Serve the React frontend for any non-API route."""
-        file_path = frontend_path / path
-        if file_path.exists() and file_path.is_file():
-            return FileResponse(file_path)
+    # Serve index.html for the root path
+    @app.get("/")
+    async def serve_frontend_root():
+        """Serve the React frontend index."""
+        return FileResponse(frontend_path / "index.html")
+
+    # Serve index.html for SPA routes (non-API, non-stream, non-file paths)
+    @app.get("/browse/{path:path}")
+    @app.get("/queue")
+    @app.get("/search")
+    @app.get("/speakers")
+    async def serve_frontend_spa(path: str = ""):
+        """Serve the React frontend for SPA routes."""
         return FileResponse(frontend_path / "index.html")

@@ -32,11 +32,14 @@ def _discover_devices() -> dict[str, SoCo]:
     """Discover all Sonos devices on the network."""
     global _devices
     try:
-        devices = soco.discover(timeout=5)
+        devices = soco.discover(timeout=5, include_invisible=True, allow_network_scan=True)
         if devices:
             _devices = {d.uid: d for d in devices}
+        else:
+            print("no sonos devices found")
     except Exception as e:
         print(f"Error discovering Sonos devices: {e}")
+        _devices = soco.discover()
     return _devices
 
 

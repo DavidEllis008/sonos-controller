@@ -5,9 +5,9 @@ FROM node:20-alpine AS frontend-builder
 
 WORKDIR /app/frontend
 
-# Copy package files first for better caching
-COPY frontend/package*.json ./
-RUN npm ci
+# Copy package files and install dependencies
+COPY frontend/package.json ./
+RUN npm install
 
 # Copy frontend source and build
 COPY frontend/ ./
