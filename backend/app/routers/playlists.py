@@ -349,13 +349,18 @@ async def save_playlist_as_m3u(
 
 def _track_to_dict(track: Track, position: int) -> dict:
     """Convert a track to a dict for playlist display."""
-    stream_url = f"{settings.stream_base_url}/stream/{track.file_path}"
+    from urllib.parse import quote
+
+    # URL-encode the file path (safe='/' keeps path separators)
+    encoded_path = quote(track.file_path, safe='/')
+    stream_url = f"{settings.stream_base_url}/stream/{encoded_path}"
     art_url = None
 
     if track.has_embedded_art:
         art_url = f"{settings.stream_base_url}/stream/art/embedded/{track.id}"
     elif track.has_folder_art and track.folder_art_path:
-        art_url = f"{settings.stream_base_url}/stream/art/{track.folder_art_path}"
+        encoded_art_path = quote(track.folder_art_path, safe='/')
+        art_url = f"{settings.stream_base_url}/stream/art/{encoded_art_path}"
 
     return {
         "id": track.id,

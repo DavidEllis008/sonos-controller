@@ -28,18 +28,64 @@ class PlayUriRequest(BaseModel):
     album_art_uri: Optional[str] = None
 
 
+class AddDeviceRequest(BaseModel):
+    ip: str
+
+
+def _add_device_by_ip(ip: str) -> Optional[SoCo]:
+    """Add a Sonos device by IP address and discover all zones from it."""
+    global _devices
+    try:
+        device = SoCo(ip)
+        # Verify it's a valid Sonos device by getting player name
+        name = device.player_name
+        print(f"Found Sonos device: {name} at {ip}")
+
+        # Add this device
+        _devices[device.uid] = device
+
+        # Use this device to discover all other devices in the household
+        try:
+            all_zones = device.all_zones
+            for zone in all_zones:
+                if zone.uid not in _devices:
+                    print(f"Found additional device: {zone.player_name} at {zone.ip_address}")
+                    _devices[zone.uid] = zone
+        except Exception as e:
+            print(f"Could not get all zones: {e}")
+
+        return device
+    except Exception as e:
+        print(f"Error connecting to {ip}: {e}")
+        return None
+
+
 def _discover_devices() -> dict[str, SoCo]:
     """Discover all Sonos devices on the network."""
     global _devices
+
+    # If we already have devices, try to refresh from one of them
+    if _devices:
+        try:
+            existing = next(iter(_devices.values()))
+            all_zones = existing.all_zones
+            _devices = {z.uid: z for z in all_zones}
+            print(f"Refreshed devices from existing connection: {len(_devices)} found")
+            return _devices
+        except Exception as e:
+            print(f"Error refreshing from existing device: {e}")
+
+    # Try SSDP discovery
     try:
-        devices = soco.discover(timeout=5, include_invisible=True, allow_network_scan=True)
+        devices = soco.discover(timeout=5, include_invisible=True)
         if devices:
             _devices = {d.uid: d for d in devices}
+            print(f"SSDP discovery found {len(_devices)} devices")
         else:
-            print("no sonos devices found")
+            print("SSDP discovery found no devices (try adding by IP)")
     except Exception as e:
-        print(f"Error discovering Sonos devices: {e}")
-        _devices = soco.discover()
+        print(f"Error during SSDP discovery: {e}")
+
     return _devices
 
 
@@ -104,6 +150,17 @@ async def get_devices():
     """Discover and return all Sonos devices."""
     devices = _discover_devices()
     return {"devices": [_device_to_dict(d) for d in devices.values()]}
+
+
+@router.post("/devices/add")
+async def add_device(request: AddDeviceRequest):
+    """Add a Sonos device by IP address (useful when SSDP discovery fails)."""
+    device = _add_device_by_ip(request.ip)
+    if not device:
+        raise HTTPException(status_code=400, detail=f"Could not connect to Sonos at {request.ip}")
+
+    # Return all devices (the added one plus any others discovered from it)
+    return {"devices": [_device_to_dict(d) for d in _devices.values()]}
 
 
 @router.get("/devices/{uid}")
@@ -209,10 +266,10 @@ async def get_queue(uid: str, start: int = 0, count: int = 50):
         items = []
         for item in queue:
             items.append({
-                "title": item.title,
-                "artist": item.creator,
-                "album": item.album,
-                "album_art": item.album_art_uri,
+                "title": getattr(item, "title", None) or "",
+                "artist": getattr(item, "creator", None) or "",
+                "album": getattr(item, "album", None) or "",
+                "album_art": getattr(item, "album_art_uri", None) or "",
                 "uri": item.resources[0].uri if item.resources else "",
             })
         return {
