@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  sonos-controller:
+    build: .
+    container_name: sonos-controller
+
+    # Use host network so Sonos devices can reach the streaming server
+    # and the controller can discover Sonos devices via multicast
+    network_mode: host
+
+    volumes:
+      # Music library - mount your SMB share on the Synology host first,
+      # then bind-mount it here (simpler than mounting SMB inside container)
+      # Example: Mount smb://Library/Family/Music to /volume1/Family/Music on Synology
+      - /volume1/Family/Music:/music:ro
+
+      # Persistent storage for database, user playlists, and config
+      - /volume1/docker/sonos-controller:/data
+
+    environment:
+      # The IP address that Sonos speakers will use to reach this server
+      # Set to 'auto' to auto-detect, or specify explicitly if needed
+      - HOST_IP=auto
+
+      # Music library path inside container
+      - MUSIC_PATH=/music
+
+      # Data path for SQLite database and config
+      - DATA_PATH=/data
+
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# Alternative configuration using bridge network with port mapping
+# (Use this if host network causes issues, but you'll need to set HOST_IP manually)
+#
+# services:
+#   sonos-controller:
+#     build: .
+#     container_name: sonos-controller
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - /volume1/Family/Music:/music:ro
+#       - /volume1/docker/sonos-controller:/data
+#     environment:
+#       - HOST_IP=192.168.1.100  # Set to your Synology's IP
+#       - MUSIC_PATH=/music
+#       - DATA_PATH=/data
+#     restart: unless-stopped
