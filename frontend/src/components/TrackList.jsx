@@ -25,15 +25,15 @@ function TrackList({ tracks, showAlbum = true }) {
                 </div>
               )}
             </div>
-            <div>
-              <div style={{ fontWeight: 500 }}>{track.title}</div>
-              <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+              <div style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.title}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {track.artist}
               </div>
             </div>
           </div>
           {showAlbum && (
-            <div style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+            <div className="track-album" style={{ color: 'var(--text-secondary)', fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {track.album}
             </div>
           )}

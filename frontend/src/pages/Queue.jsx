@@ -33,7 +33,7 @@ function Queue() {
       ) : (
         <div className="track-list">
           {queue.map((track, index) => (
-            <div key={index} className="track-row" style={{ gridTemplateColumns: '40px 1fr 80px' }}>
+            <div key={index} className="track-row queue-row">
               <span className="track-number">{index + 1}</span>
               <div className="track-title-cell">
                 <div className="album-art album-art-sm">
@@ -45,16 +45,13 @@ function Queue() {
                     </div>
                   )}
                 </div>
-                <div>
-                  <div style={{ fontWeight: 500 }}>{track.title}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                  <div style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.title}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {track.artist} {track.album && `· ${track.album}`}
                   </div>
                 </div>
               </div>
-              <span className="track-duration" style={{ textAlign: 'right' }}>
-                {/* Duration not available in queue */}
-              </span>
             </div>
           ))}
         </div>

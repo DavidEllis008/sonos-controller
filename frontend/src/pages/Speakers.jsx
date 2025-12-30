@@ -55,11 +55,11 @@ function Speakers() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {Object.values(groups).map(group => (
             <div key={group.coordinator.uid} className="card">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: group.members.length > 1 ? 16 : 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div className="speaker-card-header" style={{ marginBottom: group.members.length > 1 ? 16 : 0 }}>
+                <div className="speaker-card-info">
                   <SpeakerIcon />
                   <div>
-                    <div style={{ fontWeight: 500 }}>
+                    <div className="speaker-card-name">
                       {group.members.length > 1
                         ? group.members.map(m => m.name).join(' + ')
                         : group.coordinator.name
@@ -101,7 +101,7 @@ function Speakers() {
                 </div>
               )}
 
-              <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div className="speaker-volume-row">
                 <VolumeIcon />
                 <input
                   type="range"
@@ -115,13 +115,7 @@ function Speakers() {
                       body: JSON.stringify({ volume: parseInt(e.target.value) }),
                     })
                   }}
-                  style={{
-                    flex: 1,
-                    height: 4,
-                    background: 'var(--bg-tertiary)',
-                    borderRadius: 2,
-                    cursor: 'pointer',
-                  }}
+                  className="speaker-volume-slider"
                 />
                 <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 32 }}>
                   {group.coordinator.volume}%
@@ -132,11 +126,11 @@ function Speakers() {
 
           {standalone.map(device => (
             <div key={device.uid} className="card">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div className="speaker-card-header">
+                <div className="speaker-card-info">
                   <SpeakerIcon />
                   <div>
-                    <div style={{ fontWeight: 500 }}>{device.name}</div>
+                    <div className="speaker-card-name">{device.name}</div>
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {device.ip}
                     </div>

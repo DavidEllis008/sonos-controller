@@ -17,8 +17,8 @@ function NowPlaying() {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto' }}>
-      <div style={{ display: 'flex', gap: 40, alignItems: 'flex-start' }}>
+    <div className="now-playing-container">
+      <div className="now-playing-main">
         <div className="album-art album-art-lg">
           {nowPlaying?.album_art ? (
             <img src={nowPlaying.album_art} alt="" />
@@ -29,18 +29,18 @@ function NowPlaying() {
           )}
         </div>
 
-        <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 32, fontWeight: 600, marginBottom: 8 }}>
+        <div className="now-playing-info">
+          <h1 className="now-playing-title">
             {nowPlaying?.title || 'Not playing'}
           </h1>
-          <p style={{ fontSize: 18, color: 'var(--text-secondary)', marginBottom: 4 }}>
+          <p className="now-playing-artist">
             {nowPlaying?.artist || '—'}
           </p>
-          <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>
+          <p className="now-playing-album">
             {nowPlaying?.album || ''}
           </p>
 
-          <div style={{ marginTop: 32, display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div className="now-playing-controls">
             <button className="btn btn-icon btn-secondary" onClick={previous}>
               <PreviousIcon />
             </button>
@@ -56,37 +56,22 @@ function NowPlaying() {
             </button>
           </div>
 
-          <div style={{ marginTop: 24 }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              color: 'var(--text-muted)',
-              fontSize: 12
-            }}>
-              <span>{formatTime(nowPlaying?.position)}</span>
-              <div style={{
-                flex: 1,
-                height: 4,
-                background: 'var(--bg-tertiary)',
-                borderRadius: 2
-              }}>
-                <div style={{
-                  height: '100%',
-                  background: 'var(--accent)',
-                  borderRadius: 2,
-                  width: `${getProgress(nowPlaying)}%`
-                }} />
-              </div>
-              <span>{formatTime(nowPlaying?.duration)}</span>
+          <div className="now-playing-progress">
+            <span>{formatTime(nowPlaying?.position)}</span>
+            <div className="now-playing-progress-bar">
+              <div
+                className="now-playing-progress-fill"
+                style={{ width: `${getProgress(nowPlaying)}%` }}
+              />
             </div>
+            <span>{formatTime(nowPlaying?.duration)}</span>
           </div>
         </div>
       </div>
 
       {queue.length > 0 && (
-        <div style={{ marginTop: 48 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Up Next</h2>
+        <div className="up-next-section">
+          <h2 className="up-next-title">Up Next</h2>
           <div className="track-list">
             {queue.slice(0, 5).map((track, index) => (
               <div key={index} className="list-item">
@@ -99,9 +84,9 @@ function NowPlaying() {
                     </div>
                   )}
                 </div>
-                <div>
-                  <div style={{ fontWeight: 500 }}>{track.title}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{track.title}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {track.artist}
                   </div>
                 </div>

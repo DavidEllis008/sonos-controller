@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { Routes, Route, NavLink } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import { useStore, startPolling } from './store'
 import NowPlaying from './pages/NowPlaying'
 import Browse from './pages/Browse'
@@ -10,6 +10,8 @@ import PlayerBar from './components/PlayerBar'
 
 function App() {
   const { fetchDevices, fetchIndexStatus } = useStore()
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
     fetchDevices()
@@ -17,32 +19,84 @@ function App() {
     startPolling()
   }, [])
 
+  // Close mobile nav on route change
+  useEffect(() => {
+    setMobileNavOpen(false)
+  }, [location.pathname])
+
+  const navLinks = [
+    { to: '/', icon: <PlayIcon />, label: 'Now Playing' },
+    { to: '/browse', icon: <LibraryIcon />, label: 'Browse' },
+    { to: '/queue', icon: <QueueIcon />, label: 'Queue' },
+    { to: '/search', icon: <SearchIcon />, label: 'Search' },
+    { to: '/speakers', icon: <SpeakerIcon />, label: 'Speakers' },
+  ]
+
   return (
     <div className="app">
+      {/* Mobile Header */}
+      <header className="mobile-header">
+        <div className="mobile-header-content">
+          <span className="mobile-header-title">Sonos</span>
+          <button
+            className="hamburger-btn"
+            onClick={() => setMobileNavOpen(true)}
+            aria-label="Open menu"
+          >
+            <HamburgerIcon />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Nav Overlay */}
+      <div
+        className={`mobile-nav-overlay ${mobileNavOpen ? 'open' : ''}`}
+        onClick={() => setMobileNavOpen(false)}
+      />
+
+      {/* Mobile Nav Drawer */}
+      <nav className={`mobile-nav ${mobileNavOpen ? 'open' : ''}`}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <span style={{ fontSize: 20, fontWeight: 600 }}>Menu</span>
+          <button
+            className="hamburger-btn"
+            onClick={() => setMobileNavOpen(false)}
+            aria-label="Close menu"
+          >
+            <CloseIcon />
+          </button>
+        </div>
+        <div className="nav-section">
+          {navLinks.map(link => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              onClick={() => setMobileNavOpen(false)}
+            >
+              {link.icon}
+              <span>{link.label}</span>
+            </NavLink>
+          ))}
+        </div>
+        <IndexStatus />
+      </nav>
+
       <div className="main-content">
+        {/* Desktop Sidebar */}
         <nav className="sidebar">
           <div className="nav-section">
             <div className="nav-title">Menu</div>
-            <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <PlayIcon />
-              <span>Now Playing</span>
-            </NavLink>
-            <NavLink to="/browse" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <LibraryIcon />
-              <span>Browse</span>
-            </NavLink>
-            <NavLink to="/queue" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <QueueIcon />
-              <span>Queue</span>
-            </NavLink>
-            <NavLink to="/search" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <SearchIcon />
-              <span>Search</span>
-            </NavLink>
-            <NavLink to="/speakers" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              <SpeakerIcon />
-              <span>Speakers</span>
-            </NavLink>
+            {navLinks.map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              >
+                {link.icon}
+                <span>{link.label}</span>
+              </NavLink>
+            ))}
           </div>
           <IndexStatus />
         </nav>
@@ -143,6 +197,22 @@ function SpeakerIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor">
       <path d="M17 2H7c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 16c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+    </svg>
+  )
+}
+
+function HamburgerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
     </svg>
   )
 }

@@ -226,8 +226,8 @@ function AlbumDetail() {
       <Link to="/browse/albums" style={{ color: 'var(--text-muted)', fontSize: 14 }}>
         ← Back to Albums
       </Link>
-      <div style={{ display: 'flex', gap: 24, margin: '16px 0 24px', alignItems: 'flex-end' }}>
-        <div className="album-art" style={{ width: 180, height: 180 }}>
+      <div className="album-detail-header">
+        <div className="album-art album-detail-art">
           {tracks[0]?.art_url ? (
             <img src={tracks[0].art_url} alt="" />
           ) : (
@@ -236,8 +236,8 @@ function AlbumDetail() {
             </div>
           )}
         </div>
-        <div>
-          <h1 style={{ fontSize: 32, fontWeight: 600, marginBottom: 8 }}>{album}</h1>
+        <div className="album-detail-info">
+          <h1>{album}</h1>
           <p style={{ color: 'var(--text-secondary)' }}>{artist}</p>
           <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 8 }}>
             {tracks.length} tracks

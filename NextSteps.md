@@ -159,3 +159,10 @@ funny run command
    curl -sL -X POST -H 'Content-Type: application/json' -d '{"ip":"192.168.10.103"}' http://localhost:8000/api/sonos/devices/add > /dev/null
    Start and add device
 
+--- 
+RUN ON NAS:
+ docker run -p 8000:8000 \
+     -v /volume1/Family/Music:/music:ro \
+     -v /var/services/homes/Thoth/src/sonos-controller-data:/data \
+     -e HOST_IP=192.168.10.196 \
+     sonos-controller

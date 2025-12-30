@@ -48,23 +48,22 @@ function Search() {
       {results && !loading && (
         <div>
           {results.artists.length > 0 && (
-            <section style={{ marginBottom: 32 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Artists</h2>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <section className="search-results-section">
+              <h2 className="search-results-title">Artists</h2>
+              <div className="search-results-grid">
                 {results.artists.map(artist => (
                   <Link
                     key={artist}
                     to={`/browse/artists/${encodeURIComponent(artist)}`}
-                    className="card"
-                    style={{ padding: 12, textDecoration: 'none' }}
+                    className="card search-result-card"
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="search-result-content">
                       <div className="album-art album-art-sm">
                         <div className="album-art-placeholder">
                           <ArtistIcon />
                         </div>
                       </div>
-                      <span style={{ fontWeight: 500 }}>{artist}</span>
+                      <span className="search-result-name">{artist}</span>
                     </div>
                   </Link>
                 ))}
@@ -73,25 +72,24 @@ function Search() {
           )}
 
           {results.albums.length > 0 && (
-            <section style={{ marginBottom: 32 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Albums</h2>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <section className="search-results-section">
+              <h2 className="search-results-title">Albums</h2>
+              <div className="search-results-grid">
                 {results.albums.map((album, i) => (
                   <Link
                     key={`${album.name}-${i}`}
                     to={`/browse/albums/${encodeURIComponent(album.name)}?artist=${encodeURIComponent(album.artist || '')}`}
-                    className="card"
-                    style={{ padding: 12, textDecoration: 'none' }}
+                    className="card search-result-card"
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div className="search-result-content">
                       <div className="album-art album-art-sm">
                         <div className="album-art-placeholder">
                           <AlbumIcon />
                         </div>
                       </div>
-                      <div>
-                        <div style={{ fontWeight: 500 }}>{album.name}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{album.artist}</div>
+                      <div className="search-result-text">
+                        <div className="search-result-name">{album.name}</div>
+                        <div className="search-result-meta">{album.artist}</div>
                       </div>
                     </div>
                   </Link>
@@ -102,7 +100,7 @@ function Search() {
 
           {results.tracks.length > 0 && (
             <section>
-              <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Tracks</h2>
+              <h2 className="search-results-title">Tracks</h2>
               <TrackList tracks={results.tracks} />
             </section>
           )}
