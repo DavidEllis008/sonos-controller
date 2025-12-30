@@ -51,6 +51,7 @@ curl -s http://localhost:8000/api/health | python3 -m json.tool
 curl -s http://localhost:8000/api/library/status
 curl -s http://localhost:8000/api/sonos/devices | python3 -m json.tool
 curl -s http://localhost:8000/api/library/artists | python3 -m json.tool
+curl -sL -X POST -H 'Content-Type: application/json' -d '{"ip":"192.168.10.103"}' http://localhost:8000/api/sonos/devices/add
 ----
 ⏺ Bash(curl -sL "http://localhost:8000/api/library/albums/Abbey%20Road/tracks" ⏺ Bash(curl -sL "http://localhost:8000/api/library/albums/Abbey%20Road/tracks" | python3 -m json.tool | grep stream_url)
 ⏺ Bash(curl -sL 'http://localhost:8000/api/library/tracks?limit=3')

@@ -203,7 +203,7 @@ export const startPolling = () => {
   if (pollInterval) return
   pollInterval = setInterval(() => {
     useStore.getState().fetchNowPlaying()
-  }, 5000)
+  }, 8000)
 }
 
 export const stopPolling = () => {

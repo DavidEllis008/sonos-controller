@@ -62,12 +62,15 @@ async def index_library(session: AsyncSession, status: IndexStatus):
 
     # Count total files first
     print("Counting files...")
+    status.error_message = "Counting Files..."
     total_files = 0
     for root, dirs, files in os.walk(music_path):
         for f in files:
             ext = Path(f).suffix.lower()
             if ext in AUDIO_EXTENSIONS or ext in PLAYLIST_EXTENSIONS:
                 total_files += 1
+                if total_files % 100 == 0:
+                    status.total_files = total_files
 
     status.total_files = total_files
     await session.commit()
