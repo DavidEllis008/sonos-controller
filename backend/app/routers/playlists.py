@@ -361,6 +361,8 @@ def _track_to_dict(track: Track, position: int) -> dict:
     elif track.has_folder_art and track.folder_art_path:
         encoded_art_path = quote(track.folder_art_path, safe='/')
         art_url = f"{settings.stream_base_url}/stream/art/{encoded_art_path}"
+    else:
+        art_url = "/generic_album.jpg"
 
     return {
         "id": track.id,

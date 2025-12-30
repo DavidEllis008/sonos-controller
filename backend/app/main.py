@@ -59,6 +59,12 @@ frontend_path = Path(__file__).parent.parent.parent / "frontend" / "dist"
 if frontend_path.exists():
     app.mount("/assets", StaticFiles(directory=frontend_path / "assets"), name="assets")
 
+    # Serve generic album art placeholder
+    @app.get("/generic_album.jpg")
+    async def serve_placeholder_art():
+        """Serve the placeholder album art."""
+        return FileResponse(frontend_path / "generic_album.jpg", media_type="image/jpeg")
+
     # Serve index.html for the root path
     @app.get("/")
     async def serve_frontend_root():
